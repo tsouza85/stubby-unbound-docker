@@ -1,19 +1,8 @@
 version: '3'
 services:
-  stubby:
-    image: "mvance/stubby:latest"
-    networks:
-      vlan0:
-        ipv4_address: 172.16.0.103
-        aliases:
-          - "stubby"
-    environment:
-     - TZ=America/Sao_Paulo
-    restart: unless-stopped
   unbound:
-    image: "mvance/unbound:1.13.1-stubby"
-    depends_on:
-      - "stubby"    
+    container_name: unbound
+    image: "mvance/unbound-rpi:latest"
     ports:
      - "53:53/udp"
      - "53:53/tcp"
@@ -25,7 +14,8 @@ services:
     environment:
      - TZ=America/Sao_Paulo
     volumes:
-      - ./unbound/a-records.conf:/opt/unbound/etc/unbound/a-records.conf:ro
+      - ./a-records.conf:/opt/unbound/etc/unbound/a-records.conf:ro
+      - ./forward-records.conf:/opt/unbound/etc/unbound/forward-records.conf:ro \
     restart: unless-stopped
 
 networks:
